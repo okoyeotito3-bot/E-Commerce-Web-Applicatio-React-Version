@@ -5,7 +5,8 @@ export default function SideBarSection({ isOpen, onClose }) {
     <section
       className={`
         fixed left-0 top-16
-        w-1/2 h-screen
+        w-3/4 sm:w-1/2 md:w-1/3 lg:w-1/4
+        h-screen
         z-[60]
         bg-white shadow-2xl
         transition-transform duration-300

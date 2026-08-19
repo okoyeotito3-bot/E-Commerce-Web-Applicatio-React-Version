@@ -136,8 +136,8 @@ appName={
 <div className="flex items-center gap-2">
 <ShoppingBag className="w-6 h-6
 text-cyan-500"/>
-<span className="font-bold text-lg 
-text-gray-900">GoodStore</span>
+<span className="hidden sm:inline 
+font-bold text-lg text-gray-900">GoodStore</span>
 </div>
 }
 
@@ -163,7 +163,7 @@ isOpen={sectionBar}
 onClose={()=>setSection(false)}
 />
       
-<main className="grid grid-cols-3 gap-2 pb-20 pt-20 bg-cyan-50"
+<main className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 pb-20 pt-20 bg-cyan-50"
 onClick={()=>setSection(false)}>
 {
 loading ? 
@@ -228,12 +228,12 @@ Order Now
   
 <div className="flex flex-col gap-2 items-center">
 <House/>
-<span className="font-bold">Home</span>
+<span className="hidden sm:block font-bold">Home</span>
 </div>
 
 <div className="flex flex-col gap-2 items-center">
 <Search/>
-<span className="font-bold">Search</span>
+<span className="hidden sm:block font-bold">Search</span>
 </div>
 
 <div className="flex flex-col gap-2 items-center ">
@@ -250,19 +250,19 @@ Order Now
 </span>}
 </div>
 
-<span className="font-bold">Cart</span>
+<span className="hidden sm:block font-bold">Cart</span>
 </div>
 
 
 <div className="flex flex-col gap-2 items-center">
 <Heart/>
-<span className="font-bold">Wishlist</span>
+<span className="hidden sm:block font-bold">Wishlist</span>
 </div>
 
 
 <div className="flex flex-col gap-2 items-center">
 <User/>  
-<span className="font-bold">Profile</span>
+<span className="hidden sm:block font-bold">Profile</span>
 </div>
 
 </footer>
