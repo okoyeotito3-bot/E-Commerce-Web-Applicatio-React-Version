@@ -1,0 +1,256 @@
+import Product from "./Components/Product"
+import Header from "./Components/Header"
+import SideBarSection from "./Components/SideBarSection"
+import {
+Menu,ShoppingCart,ShoppingBag,PackageOpen
+,House,Settings,Heart,Package,User ,
+Search} from 'lucide-react'
+import {useState} from "react"
+import {useEffect} from "react"
+
+export default function App(){
+  
+  const [fetchedData,setFetchData]=useState([])
+  const [sectionBar,setSection]=useState(false)
+ const [count,setCount]=useState(0)
+
+ const [loading,setLoading]=useState(true)
+ const [error,errorState]=useState("")
+ const [wishListedItem,WishListState]=useState([])
+const [cart,itemInCart]=useState([])
+const [qty,itemQty]=useState([])
+ 
+ 
+  function handleSection(){
+    setSection(prev=>!prev)
+    
+  }
+ /* 
+  function order(){
+  setCount(count +1)
+    
+  }
+ */
+ 
+function addToCart(productId){
+  const alreadyInCart = cart.includes(productId)
+  
+  if(!alreadyInCart){
+    setCount(count + 1)
+  }
+  
+  
+ itemQty(prev => [...prev,productId]) 
+ itemInCart(prev => [...prev,productId])
+ 
+ 
+}
+ 
+
+function removeFromCart(productId){
+  itemInCart(prev => {
+    const index = prev.indexOf(productId)
+    if (index === -1) return prev
+    
+    const newCart = [...prev]
+    
+    newCart.splice(index, 1) 
+    
+    return newCart
+  })
+  
+  itemQty(prev => prev.splice(index,1))
+  
+}
+
+ 
+ function handleWishList(productId){
+   WishListState(prev =>
+   prev.includes(productId) ?
+   prev.filter(id => id !== productId):
+   [...prev,productId]
+     
+     )
+ }
+
+  async function getData(){
+    const url = import.meta.env.VITE_API_URL
+    
+    try{
+    const response = await fetch(url)
+    
+    if(!response.ok){
+      throw new Error(`HTTP REQUEST RETURNED ${response.status}`)
+    }
+    
+  const data = await response.json()
+  
+  setFetchData(data.products)
+    
+ }catch(error){
+   errorState(error.message)
+ }finally{
+   setLoading(false)
+ }
+    
+    
+    
+    
+  }
+  
+  
+  useEffect(()=>{
+    getData()
+  },[])
+  
+  
+  
+  
+  return (
+    <>
+<header className="fixed top-0 left-0 w-full h-16 bg-white border-b border-gray-200 z-50">
+  <div className="flex justify-between items-center gap-4 h-full px-4">
+    <Header
+      sideBar={
+        <Menu
+          className="w-6 h-6 text-gray-700 cursor-pointer hover:text-cyan-500 transition-colors"
+          onClick={handleSection}
+        />
+      }
+      appName={
+        <div className="flex items-center gap-2">
+          <ShoppingBag className="w-6 h-6 text-cyan-500" />
+          <span className="font-bold text-lg text-gray-900">GoodStore</span>
+        </div>
+      }
+      cartItem={
+        <div className="relative">
+          
+          <ShoppingCart className="w-6 h-6 text-gray-700 cursor-pointer hover:text-cyan-500 transition-colors" />
+          
+          {count > 0 && (
+            <span className="absolute -top-2 -right-2  text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center bg-red-400">
+              {count > 8 ? 
+                "9+":
+                 count}
+            </span>
+          )}
+        </div>
+      }
+    />
+  </div>
+</header>
+      
+<SideBarSection
+isOpen={sectionBar}
+onClose={()=>setSection(false)}
+/>
+      
+<main className="grid grid-cols-3 gap-2 pb-20 pt-20 bg-cyan-50"
+onClick={()=>setSection(false)}>
+{
+loading ? 
+<h1>Loading Data.....</h1> :
+
+error ?
+<h1>{error}</h1> :
+  
+fetchedData.map(product=> 
+<div className=" flex flex-col gap-2 p-2 shadow-xl rounded-xl relative bg-white"key={product.id}>
+<Product{...product}/>
+<button className="absolute top-0 right-0 p-4 m-auto " onClick={()=> handleWishList(product.id)}>
+{ wishListedItem.includes(product.id)?   
+<Heart className="w-6 h-6 text-red-500 fill-red-500" /> :
+<Heart className="w-7 h-7"/> 
+}
+</button>
+
+<div>
+{
+cart.includes(product.id) ?
+<div className="flex p-2 w-full">
+  
+<button
+onClick ={()=>removeFromCart(product.id)}
+className="border
+p-4 bg-red-300 
+text-white font-bold  w-1/3 font-bold">-
+</button>
+
+<button className="bg-cyan-50 w-1/3 font-bold">
+{
+qty.includes(product.id) ? 
+qty.filter(id => id === product.id).length:
+"0"
+}
+</button> 
+
+<button
+onClick={()=>addToCart(product.id)}
+className="border
+ p-4 bg-green-300 
+text-white font-bold w-1/3 font-bold">+
+</button> 
+</div>:
+<button
+onClick={()=>addToCart(product.id)}
+className="border
+rounded-xl p-4 bg-green-300 
+text-white font-bold  w-full">
+Order Now
+</button>
+}
+</div>
+
+  
+</div>
+)}
+</main>
+  
+<footer className="fixed bottom-0 left-0 w-full h-16 shadow-xl bg-white flex justify-around items-center">
+  
+<div className="flex flex-col gap-2 items-center">
+<House/>
+<span className="font-bold">Home</span>
+</div>
+
+<div className="flex flex-col gap-2 items-center">
+<Search/>
+<span className="font-bold">Search</span>
+</div>
+
+<div className="flex flex-col gap-2 items-center ">
+  
+<div className="relative">
+<ShoppingCart/>
+
+{count > 0 && 
+<span className="absolute -top-2 -right-2  text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center bg-red-400">
+  {count > 8 ? 
+  "9+":
+  count
+  }
+</span>}
+</div>
+
+<span className="font-bold">Cart</span>
+</div>
+
+
+<div className="flex flex-col gap-2 items-center">
+<Heart/>
+<span className="font-bold">Wishlist</span>
+</div>
+
+
+<div className="flex flex-col gap-2 items-center">
+<User/>  
+<span className="font-bold">Profile</span>
+</div>
+
+</footer>
+  
+    </>
+    
+    )
+}
