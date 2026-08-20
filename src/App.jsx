@@ -1,6 +1,7 @@
 import Product from "./Components/Product"
 import Header from "./Components/Header"
 import SideBarSection from "./Components/SideBarSection"
+import Cart from "./Components/Cart"
 import {
 Menu,ShoppingCart,ShoppingBag,PackageOpen
 ,House,Settings,Heart,Package,User ,
@@ -19,7 +20,7 @@ const [wishListedItem,WishListState]
 =useState([])
 const [cart,itemInCart]=useState([])
 const [qty,itemQty]=useState([])
- 
+const [cartPage,cartPageState]=useState(false)
 
 //Add To Cart function
 function addToCart(productId){
@@ -81,6 +82,12 @@ return newCount})
      
      )
  }
+ 
+ //Ordered Item section
+ function handleCartPage(){
+   cartPageState(prev => true)
+ }
+ 
 //Get product from Api
   async function getData(){
     const url = import.meta.env.VITE_API_URL
@@ -111,7 +118,27 @@ return newCount})
   useEffect(()=>{
     getData()
   },[])
+ 
+
+const uniqueId = new Set(cart)
+const destructUId = [...uniqueId]
+
+const orderProducts = destructUId.map(id =>{
+
+const product = fetchedData.find(p =>
+p.id === id
+)
+
+const quantity = qty.filter(qid => qid === id)
   
+const qtyLength = quantity.length
+
+const cartItems ={...product,quantity:qtyLength}
+
+return cartItems
+})
+
+
   
   
   
@@ -165,7 +192,21 @@ onClose={()=>setSection(false)}
       
 <main className="grid grid-cols-1  md:grid-cols-3 lg:grid-cols-4 gap-2 pb-20 pt-20 bg-cyan-50"
 onClick={()=>setSection(false)}>
+  
 {
+cartPage ?
+
+orderProducts.length === 0 ?
+
+<h1>There Is Nothing Ordered</h1>:
+
+orderProducts.map(product =>
+<div key={product.id}>
+ <Cart{...product}/> 
+ <span>{product.quantity}</span>
+ <button>Remove</button>
+</div>):
+
 loading ? 
 <h1>Loading Data.....</h1> :
 
@@ -223,9 +264,10 @@ Order Now
 </div>
 )}
 </main>
-  
+
 <footer className="fixed bottom-0 left-0 w-full h-16 shadow-xl bg-white flex justify-around items-center">
   
+
 <div className="flex flex-col gap-2 items-center">
 <House/>
 <span className="hidden sm:block font-bold">Home</span>
@@ -236,8 +278,7 @@ Order Now
 <span className="hidden sm:block font-bold">Search</span>
 </div>
 
-<div className="flex flex-col gap-2 items-center ">
-  
+<div className="flex flex-col gap-2 items-center " onClick={handleCartPage}>
 <div className="relative">
 <ShoppingCart/>
 
