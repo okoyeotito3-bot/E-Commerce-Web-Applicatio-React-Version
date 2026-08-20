@@ -10,16 +10,17 @@ import {useEffect} from "react"
 
 export default function App(){
   
-  const [fetchedData,setFetchData]=useState([])
-  const [sectionBar,setSection]=useState(false)
- const [count,setCount]=useState(0)
-
- const [loading,setLoading]=useState(true)
- const [error,errorState]=useState("")
- const [wishListedItem,WishListState]=useState([])
+const [fetchedData,setFetchData]=useState([])
+const [sectionBar,setSection]=useState(false)
+const [count,setCount]=useState([])
+const [loading,setLoading]=useState(true)
+const [error,errorState]=useState("")
+const [wishListedItem,WishListState]
+=useState([])
 const [cart,itemInCart]=useState([])
 const [qty,itemQty]=useState([])
  
+<<<<<<< HEAD
  
   function handleSection(){
     setSection(prev=>!prev)
@@ -27,35 +28,61 @@ const [qty,itemQty]=useState([])
   }
 
 
+=======
+
+//Add To Cart function
+>>>>>>> 920c963d27eaba962d4aed4dcf74258d6d711306
 function addToCart(productId){
-  const alreadyInCart = cart.includes(productId)
+const alreadyInCount = count.includes(productId)
   
-  if(!alreadyInCart){
-    setCount(count + 1)
-  }
+if(!alreadyInCount){
+setCount(prev => [...prev,productId])
+}
   
   
- itemQty(prev => [...prev,productId]) 
- itemInCart(prev => [...prev,productId])
- 
- 
+itemQty(prev => [...prev,productId]) 
+itemInCart(prev => [...prev,productId])
+
 }
  
 
+//Remove from Cart function
 function removeFromCart(productId){
+  
+const alreadyInCount = count.includes(productId)
+ 
+if(alreadyInCount){
+const isItemInCart = cart.filter(id => id === productId) 
+ 
+if(isItemInCart.length === 1){
+setCount(prev => {
+const index = prev.indexOf(productId)
+const newCount = [...prev]
+newCount.splice(index,1)
+return newCount})
+   
+}
+}
+ 
+  
   itemInCart(prev => {
-    const index = prev.indexOf(productId)
-    if (index === -1) return prev
-    
-    
-
+  const index = prev.indexOf(productId) 
+  if (index === -1) return prev
+  const newCart = [...prev]
+  newCart.splice(index, 1) 
+  return newCart
   })
   
-  itemQty(prev => [...prev,prev.splice(index,1)])
+  itemQty(prev => {
+  const index = prev.indexOf(productId) 
+  const newQty =  [...prev]
+  newQty.splice(index,1)
+  return newQty
+  })
   
 }
 
- 
+//Add and remove from Wishlist button 
  function handleWishList(productId){
    WishListState(prev =>
    prev.includes(productId) ?
@@ -64,7 +91,7 @@ function removeFromCart(productId){
      
      )
  }
-
+//Get product from Api
   async function getData(){
     const url = import.meta.env.VITE_API_URL
     
@@ -100,37 +127,45 @@ function removeFromCart(productId){
   
   return (
     <>
-<header className="fixed top-0 left-0 w-full h-16 bg-white border-b border-gray-200 z-50">
-  <div className="flex justify-between items-center gap-4 h-full px-4">
-    <Header
-      sideBar={
-        <Menu
-          className="w-6 h-6 text-gray-700 cursor-pointer hover:text-cyan-500 transition-colors"
-          onClick={handleSection}
-        />
-      }
-      appName={
-        <div className="flex items-center gap-2">
-          <ShoppingBag className="w-6 h-6 text-cyan-500" />
-          <span className="font-bold text-lg text-gray-900">GoodStore</span>
-        </div>
-      }
-      cartItem={
-        <div className="relative">
-          
-          <ShoppingCart className="w-6 h-6 text-gray-700 cursor-pointer hover:text-cyan-500 transition-colors" />
-          
-          {count > 0 && (
-            <span className="absolute -top-2 -right-2  text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center bg-red-400">
-              {count > 8 ? 
-                "9+":
-                 count}
-            </span>
-          )}
-        </div>
-      }
-    />
-  </div>
+<header className="fixed top-0 left-0 
+w-full h-16 bg-white border-b 
+border-gray-200 z-50">
+  
+<div className="flex justify-between
+items-center gap-4 h-full px-4">
+  
+<Header
+sideBar={
+<Menu
+className="w-6 h-6 text-gray-700
+cursor-pointer hover:text-cyan-500
+transition-colors"
+onClick={()=>setSection(prev=>!prev)}/>
+}
+appName={
+<div className="flex items-center gap-2">
+<ShoppingBag className="w-6 h-6
+text-cyan-500"/>
+<span className="hidden sm:inline 
+font-bold text-lg text-gray-900">GoodStore</span>
+</div>
+}
+
+cartItem={
+<div className="relative">
+<ShoppingCart className="w-6 h-6 
+text-gray-700 cursor-pointer hover:text-cyan-500 transition-colors" />
+
+{count.length > 0 && (
+<span className="absolute -top-2 -right-2  text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center bg-red-400">
+{count.length > 8 ? 
+"9+":
+count.length}
+</span>
+)}
+</div>}/>
+
+</div>
 </header>
       
 <SideBarSection
@@ -138,7 +173,7 @@ isOpen={sectionBar}
 onClose={()=>setSection(false)}
 />
       
-<main className="grid grid-cols-3 gap-2 pb-20 pt-20 bg-cyan-50"
+<main className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 pb-20 pt-20 bg-cyan-50"
 onClick={()=>setSection(false)}>
 {
 loading ? 
@@ -169,11 +204,11 @@ p-4 bg-red-300
 text-white font-bold  w-1/3 font-bold">-
 </button>
 
-<button className="bg-cyan-50 w-1/3 font-bold">
+<button className="bg-cyan-50 w-1/3 font-bold leading-relaxed ">
+<span className="mr-2">Qty</span>
 {
-qty.includes(product.id) ? 
-qty.filter(id => id === product.id).length:
-"0"
+
+qty.filter(id => id === product.id).length
 }
 </button> 
 
@@ -203,12 +238,12 @@ Order Now
   
 <div className="flex flex-col gap-2 items-center">
 <House/>
-<span className="font-bold">Home</span>
+<span className="hidden sm:block font-bold">Home</span>
 </div>
 
 <div className="flex flex-col gap-2 items-center">
 <Search/>
-<span className="font-bold">Search</span>
+<span className="hidden sm:block font-bold">Search</span>
 </div>
 
 <div className="flex flex-col gap-2 items-center ">
@@ -216,28 +251,28 @@ Order Now
 <div className="relative">
 <ShoppingCart/>
 
-{count > 0 && 
+{count.length > 0 && 
 <span className="absolute -top-2 -right-2  text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center bg-red-400">
-  {count > 8 ? 
+  {count.length > 8 ? 
   "9+":
-  count
+  count.length
   }
 </span>}
 </div>
 
-<span className="font-bold">Cart</span>
+<span className="hidden sm:block font-bold">Cart</span>
 </div>
 
 
 <div className="flex flex-col gap-2 items-center">
 <Heart/>
-<span className="font-bold">Wishlist</span>
+<span className="hidden sm:block font-bold">Wishlist</span>
 </div>
 
 
 <div className="flex flex-col gap-2 items-center">
 <User/>  
-<span className="font-bold">Profile</span>
+<span className="hidden sm:block font-bold">Profile</span>
 </div>
 
 </footer>
