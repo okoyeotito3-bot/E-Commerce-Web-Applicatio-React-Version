@@ -1,6 +1,6 @@
-import { X, House, Heart, Package, User, Settings, LogOut, Bell, HelpCircle, Tag, Moon } from 'lucide-react'
+import { X, House, Heart, Package, User, Settings, LogOut, Bell, HelpCircle, Tag, Moon,} from 'lucide-react'
 
-export default function SideBarSection({ isOpen, onClose }) {
+export default function SideBarSection({ isOpen, onClose,order,home,hideSection }) {
   return (
     <section
       className={`
@@ -14,6 +14,7 @@ export default function SideBarSection({ isOpen, onClose }) {
         overflow-y-auto
         ${isOpen ? "translate-x-0" : "-translate-x-full"}
       `}
+      onClick={hideSection}
     >
       {/* Close button */}
       <div className="flex justify-end p-4">
@@ -30,19 +31,24 @@ export default function SideBarSection({ isOpen, onClose }) {
       </div>
 
       {/* Nav links */}
-      <div className="flex flex-col gap-4 px-4 py-4 mb-12">
-        <div className="flex items-center gap-3 cursor-pointer">
+      <div className="flex flex-col gap-4 px-4 py-4 mb-12" >
+        
+        <div className="flex items-center gap-3 cursor-pointer" onClick={home}>
           <House className="w-5 h-5" />
           <span>Home</span>
         </div>
+        
         <div className="flex items-center gap-3 cursor-pointer">
           <Heart className="w-5 h-5" />
           <span>Wishlist</span>
         </div>
-        <div className="flex items-center gap-3 cursor-pointer">
+        
+        <div className="flex items-center gap-3 cursor-pointer"
+        onClick={order}>
           <Package className="w-5 h-5" />
           <span>Orders</span>
         </div>
+        
         <div className="flex items-center gap-3 cursor-pointer">
           <Bell className="w-5 h-5" />
           <span>Notifications</span>

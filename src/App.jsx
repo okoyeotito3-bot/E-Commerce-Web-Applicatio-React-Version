@@ -1,10 +1,9 @@
 import Product from "./Components/Product"
 import Header from "./Components/Header"
 import SideBarSection from "./Components/SideBarSection"
-import Cart from "./Components/Cart"
 import Warn from "./Helpers/Warn"
 import FooterIcons from "./Helpers/FooterIcon"
-
+import CheckOut from "./Helpers/CheckOut"
 import {
 Menu,ShoppingCart,ShoppingBag,PackageOpen
 ,House,Settings,Heart,Package,User ,
@@ -219,12 +218,26 @@ Order Now
 
 
 {/* Ordered Products */}
-const cartHome =cartItems.map(product =>
-<div key={product.id}>
- <Cart {...product}/> 
- <span>{product.quantity}</span>
- <button>Remove</button>
-</div>)  
+
+let cartHome =cartItems.map(product =>
+<div
+className=" flex flex-col gap-2 p-4 shadow-xl rounded-xl relative bg-white"
+key={product.id}>
+<Product {...product}/>
+
+
+<span className="absolute  right-0  p-2 top-0 font-bold font-serif"
+ >Qty:{product.quantity}</span>
+ 
+ <button className="border
+rounded-xl p-4 bg-red-300 
+text-white font-bold  w-full">
+   Remove</button>  
+
+</div>
+)  
+
+
 
 
   return (
@@ -276,24 +289,33 @@ cartItemIds.length}
 {/* SideBar */}
 <SideBarSection
 isOpen={isSidebarOpen}
+hideSection={()=>setIsSidebarOpen(false)}
 onClose={()=>setIsSidebarOpen(false)}
+home={() => navigation("Home")}
+order={() => navigation("Cart")}
 />
 
 
 {/* Main */}
-<main className="grid grid-cols-1  md:grid-cols-3 lg:grid-cols-4 gap-2 pb-20 pt-20 bg-cyan-50"
+<main className="grid grid-cols-1  md:grid-cols-3 lg:grid-cols-4 gap-2 pb-20 pt-20 bg-cyan-50 relative"
 onClick={()=>setIsSidebarOpen(false)}>
   
 {
-page === "Cart" ?
-cartHome: 
+page === "Cart" ?(
+<>
+{cartHome}
+<CheckOut
+totalPrice=
+{cartItems.reduce((acc, item) => {
+return acc + item.price * item.quantity
+},0).toFixed(2)}/>
+</>
+) :
 loading ?
-<Warn text="Loading Data...." />:
-error ? 
-<Warn text={error} />: 
-productCards
+(<Warn text="Loading Data...." />) :
+error ? (<Warn text={error} />) :
+(productCards)
 }
-
 </main>
 
 
