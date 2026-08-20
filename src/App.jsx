@@ -20,18 +20,8 @@ const [wishListedItem,WishListState]
 const [cart,itemInCart]=useState([])
 const [qty,itemQty]=useState([])
  
-<<<<<<< HEAD
- 
-  function handleSection(){
-    setSection(prev=>!prev)
-    
-  }
-
-
-=======
 
 //Add To Cart function
->>>>>>> 920c963d27eaba962d4aed4dcf74258d6d711306
 function addToCart(productId){
 const alreadyInCount = count.includes(productId)
   
@@ -62,6 +52,7 @@ newCount.splice(index,1)
 return newCount})
    
 }
+
 }
  
   
@@ -173,7 +164,7 @@ isOpen={sectionBar}
 onClose={()=>setSection(false)}
 />
       
-<main className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 pb-20 pt-20 bg-cyan-50"
+<main className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-2 pb-20 pt-20 bg-cyan-50"
 onClick={()=>setSection(false)}>
 {
 loading ? 
