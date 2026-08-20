@@ -2,6 +2,9 @@ import Product from "./Components/Product"
 import Header from "./Components/Header"
 import SideBarSection from "./Components/SideBarSection"
 import Cart from "./Components/Cart"
+import Warn from "./Helpers/Warn"
+import FooterIcons from "./Helpers/FooterIcon"
+
 import {
 Menu,ShoppingCart,ShoppingBag,PackageOpen
 ,House,Settings,Heart,Package,User ,
@@ -20,7 +23,12 @@ const [error,setError]=useState("")
 const [wishlist,setWishlist]=useState([])
 const [cart,setCart]=useState([])
 const [cartQuantities,setCartQuantities]=useState([])
-const [isCartPageOpen,setIsCartPageOpen]=useState(false)
+
+const [page, setPage] = useState("Home")
+
+function navigation(nav) {
+  setPage(nav)
+}
 
 
 
@@ -88,12 +96,8 @@ return newcartItemIds})
      
      )
  }
- 
- //Ordered Item section
- function openCartPage(){
-   setIsCartPageOpen(prev => true)
- }
- 
+
+
 //Get product from Api
   async function fetchProducts(){
     const url = import.meta.env.VITE_API_URL
@@ -147,11 +151,85 @@ return cartItems
 })
 
 
+const productCards =products.map(product=> {
+return (
+<div className=" flex flex-col gap-2 p-2 shadow-xl rounded-xl relative bg-white"key={product.id}>
   
   
+<Product {...product}/>
+
+<button 
+className="absolute top-0 right-0 p-4 m-auto " 
+onClick={()=> toggleWishlist(product.id)}>
+
+{ wishlist.includes(product.id)?   
+<Heart className="w-6 h-6 text-red-500 fill-red-500" /> :
+<Heart className="w-7 h-7"/> 
+}
+</button>
+
+
+<div>
+{
+cart.includes(product.id) ?
+<div className="flex p-2 w-full">
   
+
+<button
+onClick ={()=>removeFromCart(product.id)}
+className="border
+p-4 bg-red-300 
+text-white font-bold  w-1/3 font-bold">-
+</button>
+
+
+<button className="bg-cyan-50 w-1/3 font-bold leading-relaxed ">
+<span className="mr-2">Qty</span>
+{
+
+cartQuantities.filter(id => id === product.id).length
+}
+</button> 
+
+
+
+<button
+onClick={()=>addToCart(product.id)}
+className="border
+ p-4 bg-green-300 
+text-white font-bold w-1/3 font-bold">+
+</button> 
+</div>:
+
+
+<button
+onClick={()=>addToCart(product.id)}
+className="border
+rounded-xl p-4 bg-green-300 
+text-white font-bold  w-full">
+Order Now
+</button>
+}
+</div>
+
+  
+</div>
+
+)})
+
+
+{/* Ordered Products */}
+const cartHome =cartItems.map(product =>
+<div key={product.id}>
+ <Cart {...product}/> 
+ <span>{product.quantity}</span>
+ <button>Remove</button>
+</div>)  
+
+
   return (
     <>
+      
 <header className="fixed top-0 left-0 
 w-full h-16 bg-white border-b 
 border-gray-200 z-50">
@@ -177,12 +255,14 @@ font-bold text-lg text-gray-900">GoodStore</span>
 }
 
 cartIcon={
-<div className="relative">
+<div className="relative"
+onClick={() => navigation("Cart")}>
+  
 <ShoppingCart className="w-6 h-6 
-text-gray-700 cursor-pointer hover:text-cyan-500 transition-colors" />
+text-gray-700 cursor-pointer hover:text-cyan-500 transition-colors " />
 
 {cartItemIds.length > 0 && (
-<span className="absolute -top-2 -right-2  text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center bg-red-400">
+<span className="absolute -top-2 -right-2  text-white text-xs font-bold w-5 h-5 rounded-full flex items-center bg-red-400 justify-center ">
 {cartItemIds.length > 8 ? 
 "9+":
 cartItemIds.length}
@@ -192,103 +272,50 @@ cartItemIds.length}
 
 </div>
 </header>
-      
+
+{/* SideBar */}
 <SideBarSection
 isOpen={isSidebarOpen}
 onClose={()=>setIsSidebarOpen(false)}
 />
-      
+
+
+{/* Main */}
 <main className="grid grid-cols-1  md:grid-cols-3 lg:grid-cols-4 gap-2 pb-20 pt-20 bg-cyan-50"
 onClick={()=>setIsSidebarOpen(false)}>
   
 {
-isCartPageOpen ?
-
-cartItems.length === 0 ?
-
-<h1>There Is Nothing Ordered</h1>:
-
-cartItems.map(product =>
-<div key={product.id}>
- <Cart{...product}/> 
- <span>{product.quantity}</span>
- <button>Remove</button>
-</div>):
-
-loading ? 
-<h1>Loading Data.....</h1> :
-
-error ?
-<h1>{error}</h1> :
-  
-products.map(product=> 
-<div className=" flex flex-col gap-2 p-2 shadow-xl rounded-xl relative bg-white"key={product.id}>
-<Product{...product}/>
-<button className="absolute top-0 right-0 p-4 m-auto " onClick={()=> toggleWishlist(product.id)}>
-{ wishlist.includes(product.id)?   
-<Heart className="w-6 h-6 text-red-500 fill-red-500" /> :
-<Heart className="w-7 h-7"/> 
+page === "Cart" ?
+cartHome: 
+loading ?
+<Warn text="Loading Data...." />:
+error ? 
+<Warn text={error} />: 
+productCards
 }
-</button>
 
-<div>
-{
-cart.includes(product.id) ?
-<div className="flex p-2 w-full">
-  
-<button
-onClick ={()=>removeFromCart(product.id)}
-className="border
-p-4 bg-red-300 
-text-white font-bold  w-1/3 font-bold">-
-</button>
-
-<button className="bg-cyan-50 w-1/3 font-bold leading-relaxed ">
-<span className="mr-2">Qty</span>
-{
-
-cartQuantities.filter(id => id === product.id).length
-}
-</button> 
-
-<button
-onClick={()=>addToCart(product.id)}
-className="border
- p-4 bg-green-300 
-text-white font-bold w-1/3 font-bold">+
-</button> 
-</div>:
-<button
-onClick={()=>addToCart(product.id)}
-className="border
-rounded-xl p-4 bg-green-300 
-text-white font-bold  w-full">
-Order Now
-</button>
-}
-</div>
-
-  
-</div>
-)}
 </main>
 
+
+{/* Footer */}
 <footer className="fixed bottom-0 left-0 w-full h-16 shadow-xl bg-white flex justify-around items-center">
   
+<FooterIcons
+onClick={() => navigation("Home")}
+icon={<House/>}
+iconName="Home"
+/>
 
-<div className="flex flex-col gap-2 items-center">
-<House/>
-<span className="hidden sm:block font-bold">Home</span>
-</div>
+<FooterIcons
+icon={<Search/>}
+iconName="Search"
+/>
 
-<div className="flex flex-col gap-2 items-center">
-<Search/>
-<span className="hidden sm:block font-bold">Search</span>
-</div>
-
-<div className="flex flex-col gap-2 items-center " onClick={openCartPage}>
+<FooterIcons
+onClick={() => navigation("Cart")}
+icon={
 <div className="relative">
-<ShoppingCart/>
+<ShoppingCart/> 
 
 {cartItemIds.length > 0 && 
 <span className="absolute -top-2 -right-2  text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center bg-red-400">
@@ -299,24 +326,23 @@ Order Now
 </span>}
 </div>
 
-<span className="hidden sm:block font-bold">Cart</span>
-</div>
+}
+iconName="Cart"
+/>
 
 
-<div className="flex flex-col gap-2 items-center">
-<Heart/>
-<span className="hidden sm:block font-bold">Wishlist</span>
-</div>
 
+<FooterIcons
+icon={<Heart/>}
+iconName="Wishlist"
+/>
 
-<div className="flex flex-col gap-2 items-center">
-<User/>  
-<span className="hidden sm:block font-bold">Profile</span>
-</div>
+<FooterIcons
+icon={<User/>}
+iconName="Profile"
+/>
 
 </footer>
   
-    </>
-    
-    )
-}
+</>
+)}

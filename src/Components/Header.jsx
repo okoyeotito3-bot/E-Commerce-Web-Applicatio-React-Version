@@ -1,7 +1,7 @@
-export default function Header({sideBar,appName,cartItem}){
+export default function Header({sideBar,appName,cartIcon}){
   return <>
       <div>{sideBar}</div>
       <div>{appName}</div>
-      <div>{cartItem}</div>
+      <div>{cartIcon}</div>
       </>
 }
