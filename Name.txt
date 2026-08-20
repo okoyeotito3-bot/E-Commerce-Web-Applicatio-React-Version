@@ -1,0 +1,46 @@
+fetchedData        → products
+setFetchData       → setProducts
+
+sectionBar         → isSidebarOpen
+setSection         → setIsSidebarOpen
+
+count              → cartItemIds
+setCount           → setCartItemIds
+
+loading            → loading        (no change)
+setLoading         → setLoading     (no change)
+
+error              → error          (no change)
+errorState         → setError
+
+wishListedItem     → wishlist
+WishListState      → setWishlist
+
+cart               → cart           (no change)
+itemInCart         → setCart
+
+qty                → cartQuantities
+itemQty            → setCartQuantities
+
+cartPage           → isCartPageOpen
+cartPageState      → setIsCartPageOpen
+
+
+addToCart          → addToCart      (no change)
+removeFromCart     → removeFromCart (no change)
+handleWishList     → toggleWishlist
+handleCartPage     → openCartPage
+getData            → fetchProducts
+
+
+uniqueId           → uniqueCartIds
+destructUId        → uniqueCartIdsArray
+orderProducts      → cartItems
+
+// inside the .map() callback:
+product            → product        (no change)
+quantity           → matchingQuantityEntries
+qtyLength          → itemQuantity
+cartItems (inner)  → cartItems
+
+cartItem={...}     → cartIcon={...}
