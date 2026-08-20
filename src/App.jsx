@@ -163,7 +163,7 @@ isOpen={sectionBar}
 onClose={()=>setSection(false)}
 />
       
-<main className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 pb-20 pt-20 bg-cyan-50"
+<main className="grid grid-cols-1  md:grid-cols-3 lg:grid-cols-4 gap-2 pb-20 pt-20 bg-cyan-50"
 onClick={()=>setSection(false)}>
 {
 loading ? 
