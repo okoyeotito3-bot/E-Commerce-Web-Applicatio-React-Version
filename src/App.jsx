@@ -25,13 +25,8 @@ const [qty,itemQty]=useState([])
     setSection(prev=>!prev)
     
   }
- /* 
-  function order(){
-  setCount(count +1)
-    
-  }
- */
- 
+
+
 function addToCart(productId){
   const alreadyInCart = cart.includes(productId)
   
@@ -52,14 +47,11 @@ function removeFromCart(productId){
     const index = prev.indexOf(productId)
     if (index === -1) return prev
     
-    const newCart = [...prev]
     
-    newCart.splice(index, 1) 
-    
-    return newCart
+
   })
   
-  itemQty(prev => prev.splice(index,1))
+  itemQty(prev => [...prev,prev.splice(index,1)])
   
 }
 
