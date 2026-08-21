@@ -10,29 +10,31 @@ import {useState} from "react"
 import {useEffect} from "react"
 
 export default function App(){
-  
-const [fetchedData,setFetchData]=useState([])
-const [sectionBar,setSection]=useState(false)
-const [count,setCount]=useState([])
+
+//States
+const [products,setProducts]=useState([])
+const [isSidebarOpen,setIsSidebarOpen]=useState(false)
+const [cartItemIds,setcartItemIds]=useState([])
 const [loading,setLoading]=useState(true)
-const [error,errorState]=useState("")
-const [wishListedItem,WishListState]
-=useState([])
-const [cart,itemInCart]=useState([])
-const [qty,itemQty]=useState([])
-const [cartPage,cartPageState]=useState(false)
+const [error,setError]=useState("")
+const [wishlist,setWishlist]=useState([])
+const [cart,setCart]=useState([])
+const [cartQuantities,setCartQuantities]=useState([])
+const [isCartPageOpen,setIsCartPageOpen]=useState(false)
+
+
 
 //Add To Cart function
 function addToCart(productId){
-const alreadyInCount = count.includes(productId)
+const alreadyIncartItemIds = cartItemIds.includes(productId)
   
-if(!alreadyInCount){
-setCount(prev => [...prev,productId])
+if(!alreadyIncartItemIds){
+setcartItemIds(prev => [...prev,productId])
 }
   
   
-itemQty(prev => [...prev,productId]) 
-itemInCart(prev => [...prev,productId])
+setCartQuantities(prev => [...prev,productId]) 
+setCart(prev => [...prev,productId])
 
 }
  
@@ -40,24 +42,27 @@ itemInCart(prev => [...prev,productId])
 //Remove from Cart function
 function removeFromCart(productId){
   
-const alreadyInCount = count.includes(productId)
+const alreadyIncartItemIds = cartItemIds.includes(productId)
  
-if(alreadyInCount){
-const isItemInCart = cart.filter(id => id === productId) 
+if(alreadyIncartItemIds){
+const issetCart = cart.filter(id => id === productId) 
  
-if(isItemInCart.length === 1){
-setCount(prev => {
+if(issetCart.length === 1){
+setcartItemIds(prev => {
 const index = prev.indexOf(productId)
-const newCount = [...prev]
-newCount.splice(index,1)
-return newCount})
+const newcartItemIds = [...prev]
+newcartItemIds.splice(index,1)
+return newcartItemIds})
    
 }
 
 }
+
+
+
  
   
-  itemInCart(prev => {
+  setCart(prev => {
   const index = prev.indexOf(productId) 
   if (index === -1) return prev
   const newCart = [...prev]
@@ -65,18 +70,18 @@ return newCount})
   return newCart
   })
   
-  itemQty(prev => {
+  setCartQuantities(prev => {
   const index = prev.indexOf(productId) 
-  const newQty =  [...prev]
-  newQty.splice(index,1)
-  return newQty
+  const newcartQuantities =  [...prev]
+  newcartQuantities.splice(index,1)
+  return newcartQuantities
   })
   
 }
 
-//Add and remove from Wishlist button 
- function handleWishList(productId){
-   WishListState(prev =>
+//toggle Wishlist button 
+ function toggleWishlist(productId){
+   setWishlist(prev =>
    prev.includes(productId) ?
    prev.filter(id => id !== productId):
    [...prev,productId]
@@ -85,12 +90,12 @@ return newCount})
  }
  
  //Ordered Item section
- function handleCartPage(){
-   cartPageState(prev => true)
+ function openCartPage(){
+   setIsCartPageOpen(prev => true)
  }
  
 //Get product from Api
-  async function getData(){
+  async function fetchProducts(){
     const url = import.meta.env.VITE_API_URL
     
     try{
@@ -102,10 +107,10 @@ return newCount})
     
   const data = await response.json()
   
-  setFetchData(data.products)
+  setProducts(data.products)
     
  }catch(error){
-   errorState(error.message)
+   setError(error.message)
  }finally{
    setLoading(false)
  }
@@ -115,26 +120,28 @@ return newCount})
     
   }
   
+
+ 
   
   useEffect(()=>{
-    getData()
+    fetchProducts()
   },[])
  
 
-const uniqueId = new Set(cart)
-const destructUId = [...uniqueId]
+const uniqueCartIds = new Set(cart)
+const uniqueCartIdsArray = [...uniqueCartIds]
 
-const orderProducts = destructUId.map(id =>{
+const cartItems = uniqueCartIdsArray.map(id =>{
 
-const product = fetchedData.find(p =>
+const product = products.find(p =>
 p.id === id
 )
 
-const quantity = qty.filter(qid => qid === id)
+const matchingQuantityEntries = cartQuantities.filter(qid => qid === id)
   
-const qtyLength = quantity.length
+const itemQuantity = matchingQuantityEntries.length
 
-const cartItems ={...product,quantity:qtyLength}
+const cartItems ={...product,quantity:itemQuantity}
 
 return cartItems
 })
@@ -158,7 +165,7 @@ sideBar={
 className="w-6 h-6 text-gray-700
 cursor-pointer hover:text-cyan-500
 transition-colors"
-onClick={()=>setSection(prev=>!prev)}/>
+onClick={()=>setIsSidebarOpen(prev=>!prev)}/>
 }
 appName={
 <div className="flex items-center gap-2">
@@ -169,16 +176,16 @@ font-bold text-lg text-gray-900">GoodStore</span>
 </div>
 }
 
-cartItem={
+cartIcon={
 <div className="relative">
 <ShoppingCart className="w-6 h-6 
 text-gray-700 cursor-pointer hover:text-cyan-500 transition-colors" />
 
-{count.length > 0 && (
+{cartItemIds.length > 0 && (
 <span className="absolute -top-2 -right-2  text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center bg-red-400">
-{count.length > 8 ? 
+{cartItemIds.length > 8 ? 
 "9+":
-count.length}
+cartItemIds.length}
 </span>
 )}
 </div>}/>
@@ -187,21 +194,21 @@ count.length}
 </header>
       
 <SideBarSection
-isOpen={sectionBar}
-onClose={()=>setSection(false)}
+isOpen={isSidebarOpen}
+onClose={()=>setIsSidebarOpen(false)}
 />
       
 <main className="grid grid-cols-1  md:grid-cols-3 lg:grid-cols-4 gap-2 pb-20 pt-20 bg-cyan-50"
-onClick={()=>setSection(false)}>
+onClick={()=>setIsSidebarOpen(false)}>
   
 {
-cartPage ?
+isCartPageOpen ?
 
-orderProducts.length === 0 ?
+cartItems.length === 0 ?
 
 <h1>There Is Nothing Ordered</h1>:
 
-orderProducts.map(product =>
+cartItems.map(product =>
 <div key={product.id}>
  <Cart{...product}/> 
  <span>{product.quantity}</span>
@@ -214,11 +221,11 @@ loading ?
 error ?
 <h1>{error}</h1> :
   
-fetchedData.map(product=> 
+products.map(product=> 
 <div className=" flex flex-col gap-2 p-2 shadow-xl rounded-xl relative bg-white"key={product.id}>
 <Product{...product}/>
-<button className="absolute top-0 right-0 p-4 m-auto " onClick={()=> handleWishList(product.id)}>
-{ wishListedItem.includes(product.id)?   
+<button className="absolute top-0 right-0 p-4 m-auto " onClick={()=> toggleWishlist(product.id)}>
+{ wishlist.includes(product.id)?   
 <Heart className="w-6 h-6 text-red-500 fill-red-500" /> :
 <Heart className="w-7 h-7"/> 
 }
@@ -240,7 +247,7 @@ text-white font-bold  w-1/3 font-bold">-
 <span className="mr-2">Qty</span>
 {
 
-qty.filter(id => id === product.id).length
+cartQuantities.filter(id => id === product.id).length
 }
 </button> 
 
@@ -279,15 +286,15 @@ Order Now
 <span className="hidden sm:block font-bold">Search</span>
 </div>
 
-<div className="flex flex-col gap-2 items-center " onClick={handleCartPage}>
+<div className="flex flex-col gap-2 items-center " onClick={openCartPage}>
 <div className="relative">
 <ShoppingCart/>
 
-{count.length > 0 && 
+{cartItemIds.length > 0 && 
 <span className="absolute -top-2 -right-2  text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center bg-red-400">
-  {count.length > 8 ? 
+  {cartItemIds.length > 8 ? 
   "9+":
-  count.length
+  cartItemIds.length
   }
 </span>}
 </div>
