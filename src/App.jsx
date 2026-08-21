@@ -7,9 +7,11 @@ import CheckOut from "./Helpers/CheckOut"
 import {
 Menu,ShoppingCart,ShoppingBag,PackageOpen
 ,House,Settings,Heart,Package,User ,
-Search} from 'lucide-react'
+Search,LayoutGrid} from 'lucide-react'
 import {useState} from "react"
 import {useEffect} from "react"
+import categories from "./Helpers/Categories"
+import HeaderElem from './Components/HeaderElem'
 
 export default function App(){
 
@@ -130,7 +132,7 @@ return newcartItemIds})
     fetchProducts()
   },[])
  
-
+{/*   Building Orderded Products page*/}
 const uniqueCartIds = new Set(cart)
 const uniqueCartIdsArray = [...uniqueCartIds]
 
@@ -238,18 +240,37 @@ text-white font-bold  w-full">
 )  
 
 
+{/*   Building wishlist Product Page*/}
+const wishlistItems = wishlist.map(id =>{
+return products.find(item => item.id ===id)
+}).filter(Boolean)
+
+{/*Wishlist Product*/}
+const wishlistHome =wishlistItems.map(product =>
+<div
+className=" flex flex-col gap-2 p-4 shadow-xl rounded-xl relative bg-white"
+key={product.id}>
+  
+<Product {...product}/>
+
+ 
+ <button className="border
+rounded-xl p-4 bg-red-300 
+text-white font-bold  w-full">
+   Remove From Wishlist</button>  
+</div>)
+
+
+
+{/* Building Categories Page */}
+
 
 
   return (
     <>
       
-<header className="fixed top-0 left-0 
-w-full h-16 bg-white border-b 
-border-gray-200 z-50">
-  
-<div className="flex justify-between
-items-center gap-4 h-full px-4">
-  
+<HeaderElem
+items={
 <Header
 sideBar={
 <Menu
@@ -281,10 +302,16 @@ text-gray-700 cursor-pointer hover:text-cyan-500 transition-colors " />
 cartItemIds.length}
 </span>
 )}
-</div>}/>
+</div>}/>  
+  
+}
+/>
 
-</div>
-</header>
+  
+
+
+
+
 
 {/* SideBar */}
 <SideBarSection
@@ -301,6 +328,8 @@ order={() => navigation("Cart")}
 onClick={()=>setIsSidebarOpen(false)}>
   
 {
+
+
 page === "Cart" ?(
 <>
 {cartHome}
@@ -311,6 +340,13 @@ return acc + item.price * item.quantity
 },0).toFixed(2)}/>
 </>
 ) :
+page === "wishlist" ?(
+wishlistItems.length >0 ?
+wishlistHome:
+<Warn
+text="You have no wishlisted items"
+/> ) :
+
 loading ?
 (<Warn text="Loading Data...." />) :
 error ? (<Warn text={error} />) :
@@ -329,8 +365,8 @@ iconName="Home"
 />
 
 <FooterIcons
-icon={<Search/>}
-iconName="Search"
+icon={<LayoutGrid/>}
+iconName="Cartegories"
 />
 
 <FooterIcons
@@ -355,6 +391,7 @@ iconName="Cart"
 
 
 <FooterIcons
+onClick={()=>navigation("wishlist")}
 icon={<Heart/>}
 iconName="Wishlist"
 />
